@@ -1,10 +1,21 @@
 import { matchesPattern } from '../utils';
 
 
-export default function transformSystemImportCall(t, nodePath, mapper, state, cwd) {
+const patterns = [
+  'require',
+  'require.resolve',
+  'System.import',
+  'jest.genMockFromModule',
+  'jest.mock',
+  'jest.unmock',
+  'jest.doMock',
+  'jest.dontMock',
+];
+
+export default function transformCall(t, nodePath, mapper, state, cwd) {
   const calleePath = nodePath.get('callee');
 
-  if (!matchesPattern(t, calleePath, 'System.import')) {
+  if (!patterns.some(pattern => matchesPattern(t, calleePath, pattern))) {
     return;
   }
 

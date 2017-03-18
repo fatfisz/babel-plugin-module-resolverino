@@ -15,17 +15,14 @@ export function replaceExtension(p, ext) {
   return path.join(path.dirname(p), filename);
 }
 
-export function matchesPattern(t, calleePath, pattern, allowPartial) {
+export function matchesPattern(t, calleePath, pattern) {
   const { node } = calleePath;
 
   if (t.isMemberExpression(node)) {
-    return calleePath.matchesPattern(pattern, allowPartial);
+    return calleePath.matchesPattern(pattern);
   }
 
-  if (
-    !t.isIdentifier(node) ||
-    (pattern.includes('.') && !allowPartial)
-  ) {
+  if (!t.isIdentifier(node) || pattern.includes('.')) {
     return false;
   }
 

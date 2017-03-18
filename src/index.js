@@ -3,10 +3,8 @@ import fs from 'fs';
 import glob from 'glob';
 import findBabelConfig from 'find-babel-config';
 import getRealPath from './getRealPath';
-import transformImportCall from './transformers/import';
-import transformSystemImportCall from './transformers/systemImport';
-import transformJestCalls from './transformers/jest';
-import transformRequireCall from './transformers/require';
+import transformImport from './transformers/import';
+import transformCall from './transformers/call';
 
 const defaultBabelExtensions = ['.js', '.jsx', '.es', '.es6'];
 export const defaultExtensions = defaultBabelExtensions;
@@ -66,15 +64,13 @@ export function manipulatePluginOptions(pluginOpts) {
 export default ({ types: t }) => {
   const importVisitors = {
     CallExpression(nodePath, state) {
-      transformRequireCall(t, nodePath, mapModule, state, this.moduleResolverCWD);
-      transformJestCalls(t, nodePath, mapModule, state, this.moduleResolverCWD);
-      transformSystemImportCall(t, nodePath, mapModule, state, this.moduleResolverCWD);
+      transformCall(t, nodePath, mapModule, state, this.moduleResolverCWD);
     },
     ImportDeclaration(nodePath, state) {
-      transformImportCall(t, nodePath, mapModule, state, this.moduleResolverCWD);
+      transformImport(t, nodePath, mapModule, state, this.moduleResolverCWD);
     },
     ExportDeclaration(nodePath, state) {
-      transformImportCall(t, nodePath, mapModule, state, this.moduleResolverCWD);
+      transformImport(t, nodePath, mapModule, state, this.moduleResolverCWD);
     },
   };
 

@@ -108,4 +108,11 @@ describe('jest functions', () => {
       });
     });
   });
+
+  it('should ignore the call if the method name is missing', () => {
+    const code = 'jest("components/Sidebar/Footer");';
+    const result = transform(code, transformerOpts);
+
+    expect(result.code).toBe('jest("components/Sidebar/Footer");');
+  });
 });
