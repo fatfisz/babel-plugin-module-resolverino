@@ -97,9 +97,9 @@ export default function getRealPath(sourcePath, currentFile, opts) {
   const absCurrentFile = path.resolve(currentFile);
 
   const { cwd, pluginOpts } = opts;
-  const rootDirs = pluginOpts.root || [];
+  const rootDirs = pluginOpts.root;
   const regExps = pluginOpts.regExps;
-  const alias = pluginOpts.alias || {};
+  const alias = pluginOpts.alias;
   const extensions = pluginOpts.extensions;
 
   const sourceFileFromRoot = getRealPathFromRootConfig(

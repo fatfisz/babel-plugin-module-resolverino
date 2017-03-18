@@ -24,6 +24,9 @@ export function manipulatePluginOptions(pluginOpts) {
       }
       return resolvedDirs.concat(dirPath);
     }, []);
+  } else {
+    // eslint-disable-next-line no-param-reassign
+    pluginOpts.root = [];
   }
 
   // eslint-disable-next-line no-param-reassign
@@ -48,6 +51,9 @@ export function manipulatePluginOptions(pluginOpts) {
         // eslint-disable-next-line no-param-reassign
         delete pluginOpts.alias[key];
       });
+  } else {
+    // eslint-disable-next-line no-param-reassign
+    pluginOpts.alias = {};
   }
 
   if (!pluginOpts.extensions) {
