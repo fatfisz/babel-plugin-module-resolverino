@@ -6,6 +6,9 @@ import transformImport from './transformers/import';
 import transformCall from './transformers/call';
 
 
+const defaultBabelExtensions = ['.js', '.jsx', '.es', '.es6'];
+const defaultExtensions = defaultBabelExtensions;
+
 function isRegExp(string) {
   return string.startsWith('^') || string.endsWith('$');
 }
@@ -45,6 +48,11 @@ export function manipulatePluginOptions(pluginOpts) {
         // eslint-disable-next-line no-param-reassign
         delete pluginOpts.alias[key];
       });
+  }
+
+  if (!pluginOpts.extensions) {
+    // eslint-disable-next-line no-param-reassign
+    pluginOpts.extensions = defaultExtensions;
   }
 
   return pluginOpts;
