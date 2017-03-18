@@ -72,6 +72,13 @@ describe('jest functions', () => {
         expect(result.code).toBe(`jest.${name}("./test/testproject/src/components/Sidebar/Footer");`);
       });
 
+      it('should resolve the path if the method name is a string literal', () => {
+        const code = `jest["${name}"]("components/Sidebar/Footer");`;
+        const result = transform(code, transformerOpts);
+
+        expect(result.code).toBe(`jest["${name}"]("./test/testproject/src/components/Sidebar/Footer");`);
+      });
+
       it('should alias the path', () => {
         const code = `jest.${name}("test");`;
         const result = transform(code, transformerOpts);
@@ -84,6 +91,20 @@ describe('jest functions', () => {
         const result = transform(code, transformerOpts);
 
         expect(result.code).toBe(`jest.${name}("./utils");`);
+      });
+
+      it('should ignore the call if the method name is not fully matched (suffix)', () => {
+        const code = `jest.${name}.after("components/Sidebar/Footer");`;
+        const result = transform(code, transformerOpts);
+
+        expect(result.code).toBe(`jest.${name}.after("components/Sidebar/Footer");`);
+      });
+
+      it('should ignore the call if the method name is not fully matched (prefix)', () => {
+        const code = `before.jest.${name}("components/Sidebar/Footer");`;
+        const result = transform(code, transformerOpts);
+
+        expect(result.code).toBe(`before.jest.${name}("components/Sidebar/Footer");`);
       });
     });
   });

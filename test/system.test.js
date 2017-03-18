@@ -24,6 +24,13 @@ describe('System.import', () => {
     expect(result.code).toBe('System.import("./test/testproject/src/app").then(() => {}).catch(() => {});');
   });
 
+  it('should resolve the path if the method name is a string literal', () => {
+    const code = 'System["import"]("test/tools").then(() => {}).catch(() => {});';
+    const result = transform(code, transformerOpts);
+
+    expect(result.code).toBe('System["import"]("./test/testproject/test/tools").then(() => {}).catch(() => {});');
+  });
+
   it('should alias the path', () => {
     const code = 'System.import("test/tools").then(() => {}).catch(() => {});';
     const result = transform(code, transformerOpts);
@@ -57,5 +64,19 @@ describe('System.import', () => {
     const result = transform(code, transformerOpts);
 
     expect(result.code).toBe('System.import(\'\').then(() => {}).catch(() => {});');
+  });
+
+  it('should ignore the call if the method name is not fully matched (suffix)', () => {
+    const code = 'System.import.after("test/tools").then(() => {}).catch(() => {});';
+    const result = transform(code, transformerOpts);
+
+    expect(result.code).toBe('System.import.after("test/tools").then(() => {}).catch(() => {});');
+  });
+
+  it('should ignore the call if the method name is not fully matched (prefix)', () => {
+    const code = 'before.System.import("test/tools").then(() => {}).catch(() => {});';
+    const result = transform(code, transformerOpts);
+
+    expect(result.code).toBe('before.System.import("test/tools").then(() => {}).catch(() => {});');
   });
 });

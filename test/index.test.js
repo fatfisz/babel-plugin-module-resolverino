@@ -7,11 +7,25 @@ import plugin from '../src';
 
 describe('module-resolver', () => {
   function testRequireImport(source, output, transformerOpts) {
-    it('with a require statement', () => {
+    it('with a require call', () => {
       const code = `var something = require("${source}");`;
       const result = transform(code, transformerOpts);
 
       expect(result.code).toBe(`var something = require("${output}");`);
+    });
+
+    it('with a require.resolve call', () => {
+      const code = `var something = require.resolve("${source}");`;
+      const result = transform(code, transformerOpts);
+
+      expect(result.code).toBe(`var something = require.resolve("${output}");`);
+    });
+
+    it('not with a whatever.require call', () => {
+      const code = `var something = whatever.require("${source}");`;
+      const result = transform(code, transformerOpts);
+
+      expect(result.code).toBe(`var something = whatever.require("${source}");`);
     });
 
     it('with an import statement', () => {
