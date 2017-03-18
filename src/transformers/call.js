@@ -13,7 +13,7 @@ const patterns = [
   'jest.dontMock',
 ];
 
-export default function transformCall(t, nodePath, state, cwd) {
+export default function transformCall(t, nodePath, state) {
   const calleePath = nodePath.get('callee');
 
   if (!patterns.some(pattern => matchesPattern(t, calleePath, pattern))) {
@@ -27,7 +27,8 @@ export default function transformCall(t, nodePath, state, cwd) {
 
   const moduleArg = nodePath.get('arguments.0');
   if (moduleArg.type === 'StringLiteral') {
-    const modulePath = mapModule(moduleArg.node.value, state.file.opts.filename, state.opts, cwd);
+    // eslint-disable-next-line max-len
+    const modulePath = mapModule(moduleArg.node.value, state.file.opts.filename, state.opts, state.moduleResolverCWD);
     if (modulePath) {
       moduleArg.replaceWith(t.stringLiteral(modulePath));
     }

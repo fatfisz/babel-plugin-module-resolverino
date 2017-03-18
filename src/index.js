@@ -53,13 +53,13 @@ export function manipulatePluginOptions(pluginOpts) {
 export default ({ types: t }) => {
   const importVisitors = {
     CallExpression(nodePath, state) {
-      transformCall(t, nodePath, state, this.moduleResolverCWD);
+      transformCall(t, nodePath, state);
     },
     ImportDeclaration(nodePath, state) {
-      transformImport(t, nodePath, state, this.moduleResolverCWD);
+      transformImport(t, nodePath, state);
     },
     ExportDeclaration(nodePath, state) {
-      transformImport(t, nodePath, state, this.moduleResolverCWD);
+      transformImport(t, nodePath, state);
     },
   };
 
