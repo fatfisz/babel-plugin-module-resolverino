@@ -1,7 +1,10 @@
+import { matchesPattern } from '../utils';
+
+
 export default function transformSystemImportCall(t, nodePath, mapper, state, cwd) {
   const calleePath = nodePath.get('callee');
 
-  if (!calleePath.matchesPattern('System.import')) {
+  if (!matchesPattern(t, calleePath, 'System.import')) {
     return;
   }
 

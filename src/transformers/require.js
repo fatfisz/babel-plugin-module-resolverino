@@ -1,9 +1,9 @@
+import { matchesPattern } from '../utils';
+
+
 export default function transformRequireCall(t, nodePath, mapper, state, cwd) {
   const calleePath = nodePath.get('callee');
-  if (
-    !t.isIdentifier(calleePath.node, { name: 'require' }) &&
-    !calleePath.matchesPattern('require', true)
-  ) {
+  if (!matchesPattern(t, calleePath, 'require', true)) {
     return;
   }
 

@@ -1,3 +1,6 @@
+import { matchesPattern } from '../utils';
+
+
 export default function transformJestCalls(t, nodePath, mapper, state, cwd) {
   const calleePath = nodePath.get('callee');
 
@@ -9,7 +12,7 @@ export default function transformJestCalls(t, nodePath, mapper, state, cwd) {
     'dontMock',
   ];
 
-  if (!jestMethods.some(methodName => calleePath.matchesPattern(`jest.${methodName}`))) {
+  if (!jestMethods.some(methodName => matchesPattern(t, calleePath, `jest.${methodName}`))) {
     return;
   }
 
