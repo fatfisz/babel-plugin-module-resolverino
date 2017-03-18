@@ -7,7 +7,7 @@ import transformCall from './transformers/call';
 
 
 const defaultBabelExtensions = ['.js', '.jsx', '.es', '.es6'];
-const defaultExtensions = defaultBabelExtensions;
+export const defaultExtensions = defaultBabelExtensions;
 
 function isRegExp(string) {
   return string.startsWith('^') || string.endsWith('$');
