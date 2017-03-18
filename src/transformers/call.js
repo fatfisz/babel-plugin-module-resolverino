@@ -24,11 +24,11 @@ export default function transformCall(t, nodePath, mapper, state, cwd) {
     return;
   }
 
-  const moduleArg = args[0];
-  if (moduleArg.node.type === 'StringLiteral') {
+  const moduleArg = nodePath.get('arguments.0');
+  if (moduleArg.type === 'StringLiteral') {
     const modulePath = mapper(moduleArg.node.value, state.file.opts.filename, state.opts, cwd);
     if (modulePath) {
-      nodePath.get('arguments.0').replaceWith(t.stringLiteral(modulePath));
+      moduleArg.replaceWith(t.stringLiteral(modulePath));
     }
   }
 }
