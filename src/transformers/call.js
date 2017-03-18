@@ -1,3 +1,4 @@
+import mapModule from '../mapModule';
 import { matchesPattern } from '../utils';
 
 
@@ -12,7 +13,7 @@ const patterns = [
   'jest.dontMock',
 ];
 
-export default function transformCall(t, nodePath, mapper, state, cwd) {
+export default function transformCall(t, nodePath, state, cwd) {
   const calleePath = nodePath.get('callee');
 
   if (!patterns.some(pattern => matchesPattern(t, calleePath, pattern))) {
@@ -26,7 +27,7 @@ export default function transformCall(t, nodePath, mapper, state, cwd) {
 
   const moduleArg = nodePath.get('arguments.0');
   if (moduleArg.type === 'StringLiteral') {
-    const modulePath = mapper(moduleArg.node.value, state.file.opts.filename, state.opts, cwd);
+    const modulePath = mapModule(moduleArg.node.value, state.file.opts.filename, state.opts, cwd);
     if (modulePath) {
       moduleArg.replaceWith(t.stringLiteral(modulePath));
     }
