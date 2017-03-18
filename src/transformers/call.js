@@ -1,4 +1,4 @@
-import mapModule from '../mapModule';
+import getRealPath from '../getRealPath';
 import { matchesPattern } from '../utils';
 
 
@@ -27,7 +27,7 @@ export default function transformCall(t, nodePath, state) {
 
   const moduleArg = nodePath.get('arguments.0');
   if (moduleArg.type === 'StringLiteral') {
-    const modulePath = mapModule(moduleArg.node.value, state);
+    const modulePath = getRealPath(moduleArg.node.value, state);
     if (modulePath) {
       moduleArg.replaceWith(t.stringLiteral(modulePath));
     }
