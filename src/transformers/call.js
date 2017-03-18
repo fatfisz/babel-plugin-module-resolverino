@@ -27,8 +27,7 @@ export default function transformCall(t, nodePath, state) {
 
   const moduleArg = nodePath.get('arguments.0');
   if (moduleArg.type === 'StringLiteral') {
-    // eslint-disable-next-line max-len
-    const modulePath = mapModule(moduleArg.node.value, state.file.opts.filename, state.opts, state.moduleResolverCWD);
+    const modulePath = mapModule(moduleArg.node.value, state);
     if (modulePath) {
       moduleArg.replaceWith(t.stringLiteral(modulePath));
     }
