@@ -98,7 +98,7 @@ export default ({ types: t }) => {
           : null;
       }
 
-      this.moduleResolverCWD = customCWD || process.cwd();
+      this.cwd = customCWD || process.cwd();
     },
 
     visitor: {
