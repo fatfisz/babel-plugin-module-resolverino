@@ -184,6 +184,14 @@ describe('module-resolver', () => {
         );
       });
 
+      describe('should resolve the file path with an extension that is non-standard in node', () => {
+        testRequireImport(
+          'es6module',
+          './test/testproject/src/es6module',
+          rootTransformerOpts,
+        );
+      });
+
       describe('should resolve the file path with a filename containing a dot', () => {
         testRequireImport(
           'libs/custom.modernizr3',
