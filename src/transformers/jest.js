@@ -9,11 +9,7 @@ export default function transformJestCalls(t, nodePath, mapper, state, cwd) {
     'dontMock',
   ];
 
-  if (!(
-    t.isMemberExpression(calleePath.node) &&
-    t.isIdentifier(calleePath.node.object, { name: 'jest' }) &&
-    jestMethods.some(methodName => t.isIdentifier(calleePath.node.property, { name: methodName }))
-  )) {
+  if (!jestMethods.some(methodName => calleePath.matchesPattern(`jest.${methodName}`))) {
     return;
   }
 

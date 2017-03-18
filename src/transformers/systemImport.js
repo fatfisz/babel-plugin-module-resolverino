@@ -1,11 +1,7 @@
 export default function transformSystemImportCall(t, nodePath, mapper, state, cwd) {
   const calleePath = nodePath.get('callee');
 
-  if (!(
-    t.isMemberExpression(calleePath.node) &&
-    t.isIdentifier(calleePath.node.object, { name: 'System' }) &&
-    t.isIdentifier(calleePath.node.property, { name: 'import' })
-  )) {
+  if (!calleePath.matchesPattern('System.import')) {
     return;
   }
 

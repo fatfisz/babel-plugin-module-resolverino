@@ -2,10 +2,7 @@ export default function transformRequireCall(t, nodePath, mapper, state, cwd) {
   const calleePath = nodePath.get('callee');
   if (
     !t.isIdentifier(calleePath.node, { name: 'require' }) &&
-    !(
-      t.isMemberExpression(calleePath.node) &&
-      t.isIdentifier(calleePath.node.object, { name: 'require' })
-    )
+    !calleePath.matchesPattern('require', true)
   ) {
     return;
   }
