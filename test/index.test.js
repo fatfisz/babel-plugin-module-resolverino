@@ -192,6 +192,14 @@ describe('module-resolver', () => {
         );
       });
 
+      describe('should not resolve the file path with an unknown extension', () => {
+        testRequireImport(
+          'text',
+          'text',
+          rootTransformerOpts,
+        );
+      });
+
       describe('should resolve the file path with a filename containing a dot', () => {
         testRequireImport(
           'libs/custom.modernizr3',
@@ -271,6 +279,36 @@ describe('module-resolver', () => {
           'SidebarFooterButton',
           './test/testproject/src/components/Sidebar/Footer/SidebarFooterButton',
           globRootTransformerOpts,
+        );
+      });
+    });
+
+    describe('non-standard extensions', () => {
+      const rootTransformerOpts = {
+        babelrc: false,
+        plugins: [
+          [plugin, {
+            root: [
+              './test/testproject/src',
+            ],
+            extensions: ['.txt'],
+          }],
+        ],
+      };
+
+      describe('should not resolve the file path with an unknown extension', () => {
+        testRequireImport(
+          'app',
+          'app',
+          rootTransformerOpts,
+        );
+      });
+
+      describe('should resolve the file path with a known defined extension', () => {
+        testRequireImport(
+          'text',
+          './test/testproject/src/text',
+          rootTransformerOpts,
         );
       });
     });
