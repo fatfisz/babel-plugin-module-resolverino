@@ -1,4 +1,5 @@
 import path from 'path';
+import getRealPath from './getRealPath';
 
 export function toPosixPath(modulePath) {
   return modulePath.replace(/\\/g, '/');
@@ -29,4 +30,15 @@ export function matchesPattern(t, calleePath, pattern) {
   const name = pattern.split('.')[0];
 
   return node.name === name;
+}
+
+export function mapPathString(t, nodePath, state) {
+  if (!nodePath || nodePath.type !== 'StringLiteral') {
+    return;
+  }
+
+  const modulePath = getRealPath(nodePath.node.value, state);
+  if (modulePath) {
+    nodePath.replaceWith(t.stringLiteral(modulePath));
+  }
 }

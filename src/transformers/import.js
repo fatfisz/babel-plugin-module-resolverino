@@ -1,11 +1,5 @@
-import getRealPath from '../getRealPath';
+import { mapPathString } from '../utils';
 
 export default function transformImport(t, nodePath, state) {
-  const source = nodePath.get('source');
-  if (source.type === 'StringLiteral') {
-    const modulePath = getRealPath(source.node.value, state);
-    if (modulePath) {
-      source.replaceWith(t.stringLiteral(modulePath));
-    }
-  }
+  mapPathString(t, nodePath.get('source'), state);
 }

@@ -1,5 +1,4 @@
-import getRealPath from '../getRealPath';
-import { matchesPattern } from '../utils';
+import { matchesPattern, mapPathString } from '../utils';
 
 const patterns = [
   'require',
@@ -19,16 +18,5 @@ export default function transformCall(t, nodePath, state) {
     return;
   }
 
-  const args = nodePath.get('arguments');
-  if (!args.length) {
-    return;
-  }
-
-  const moduleArg = nodePath.get('arguments.0');
-  if (moduleArg.type === 'StringLiteral') {
-    const modulePath = getRealPath(moduleArg.node.value, state);
-    if (modulePath) {
-      moduleArg.replaceWith(t.stringLiteral(modulePath));
-    }
-  }
+  mapPathString(t, nodePath.get('arguments.0'), state);
 }
