@@ -26,28 +26,6 @@ describe('module-resolver', () => {
         ],
       };
 
-      it('should handle no arguments', () => {
-        const code = 'var something = require();';
-        const result = transform(code, rootTransformerOpts);
-
-        expect(result.code).toBe('var something = require();');
-      });
-
-      it('should handle the first argument not being a string literal', () => {
-        const code = 'var something = require(path);';
-        const result = transform(code, rootTransformerOpts);
-
-        expect(result.code).toBe('var something = require(path);');
-      });
-
-      describe('should handle an empty path', () => {
-        testRequireImport(
-          '',
-          '',
-          rootTransformerOpts,
-        );
-      });
-
       describe('should resolve the file path', () => {
         testRequireImport(
           'app',
