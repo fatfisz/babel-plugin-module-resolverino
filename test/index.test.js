@@ -1,8 +1,6 @@
 /* eslint-env jest */
 import path from 'path';
-import { transform } from 'babel-core'; // eslint-disable-line import/no-extraneous-dependencies
-import transformToCommonJsPlugin from 'babel-plugin-transform-es2015-modules-commonjs';
-import { stripIndent } from 'common-tags';
+import { transform } from 'babel-core';
 import plugin from '../src';
 
 describe('module-resolver', () => {
@@ -12,87 +10,6 @@ describe('module-resolver', () => {
       const result = transform(code, transformerOpts);
 
       expect(result.code).toBe(`import something from "${output}";`);
-    });
-
-    it('with an "export from" statement', () => {
-      const code = `export { something } from "${source}";`;
-      const result = transform(code, transformerOpts);
-
-      expect(result.code).toBe(`export { something } from "${output}";`);
-    });
-
-    it('with an export statement', () => {
-      const code = 'export { something };';
-      const result = transform(code, transformerOpts);
-
-      expect(result.code).toBe('export { something };');
-    });
-  }
-
-  function testImportWithCommonJSTransform(source, output, transformerOpts) {
-    const transformerOptsWithCommonJs = {
-      plugins: [
-        ...transformerOpts.plugins,
-        [transformToCommonJsPlugin, { noInterop: true }],
-      ],
-    };
-
-    it('with a require statement', () => {
-      const code = `var something = require("${source}");`;
-      const result = transform(code, transformerOptsWithCommonJs);
-
-      expect(result.code).toBe(stripIndent`
-        "use strict";
-
-        var something = require("${output}");
-      `);
-    });
-
-    it('with an import statement', () => {
-      const code = `import something from "${source}";`;
-      const result = transform(code, transformerOptsWithCommonJs);
-
-      expect(result.code).toBe(stripIndent`
-        "use strict";
-
-        var _storage = require("${output}");
-      `);
-    });
-
-    it('with an "export from" statement', () => {
-      const code = `export { something } from "${source}";`;
-      const result = transform(code, transformerOptsWithCommonJs);
-
-      expect(result.code).toBe(stripIndent`
-        "use strict";
-
-        Object.defineProperty(exports, "__esModule", {
-          value: true
-        });
-
-        var _storage = require("${output}");
-
-        Object.defineProperty(exports, "something", {
-          enumerable: true,
-          get: function () {
-            return _storage.something;
-          }
-        });
-      `);
-    });
-
-    it('with an export statement', () => {
-      const code = 'export { something };';
-      const result = transform(code, transformerOptsWithCommonJs);
-
-      expect(result.code).toBe(stripIndent`
-        "use strict";
-
-        Object.defineProperty(exports, "__esModule", {
-          value: true
-        });
-        exports.something = something;
-      `);
     });
   }
 
@@ -460,16 +377,6 @@ describe('module-resolver', () => {
         testRequireImport(
           'regexp-priority',
           'hit',
-          aliasTransformerOpts,
-        );
-      });
-    });
-
-    describe('with the commonjs transformer', () => {
-      describe('should only apply the alias once', () => {
-        testImportWithCommonJSTransform(
-          'prefix/storage',
-          'prefix/lib/storage',
           aliasTransformerOpts,
         );
       });
