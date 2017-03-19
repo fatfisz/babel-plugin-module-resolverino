@@ -1,7 +1,6 @@
 import getRealPath from '../getRealPath';
 import { matchesPattern } from '../utils';
 
-
 const patterns = [
   'require',
   'require.resolve',

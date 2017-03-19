@@ -5,7 +5,6 @@ import findBabelConfig from 'find-babel-config';
 import transformImport from './transformers/import';
 import transformCall from './transformers/call';
 
-
 const defaultBabelExtensions = ['.js', '.jsx', '.es', '.es6'];
 export const defaultExtensions = defaultBabelExtensions;
 
