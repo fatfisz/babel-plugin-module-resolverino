@@ -6,14 +6,14 @@ import mapToRelative from 'mapToRelative';
 import { toLocalPath, toPosixPath, replaceExtension } from 'utils';
 
 
-function findPathInRoots(sourcePath, rootDirs, cwd, extensions) {
+function findPathInRoots(sourcePath, rootDirs, extensions) {
   // Search the source path inside every custom root directory
   let resolvedSourceFile;
-  rootDirs.some((dir) => {
+  rootDirs.some((basedir) => {
     try {
       // check if the file exists (will throw if not)
       resolvedSourceFile = requireResolve.sync(`./${sourcePath}`, {
-        basedir: resolve(cwd, dir),
+        basedir,
         extensions,
       });
       return true;
@@ -26,7 +26,7 @@ function findPathInRoots(sourcePath, rootDirs, cwd, extensions) {
 }
 
 function getRealPathFromRootConfig(sourcePath, absCurrentFile, rootDirs, cwd, extensions) {
-  const absFileInRoot = findPathInRoots(sourcePath, rootDirs, cwd, extensions);
+  const absFileInRoot = findPathInRoots(sourcePath, rootDirs, extensions);
 
   if (!absFileInRoot) {
     return null;
