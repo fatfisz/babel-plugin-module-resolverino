@@ -1,9 +1,12 @@
-import path from 'path';
 import fs from 'fs';
-import glob from 'glob';
+import path from 'path';
+
 import findBabelConfig from 'find-babel-config';
-import transformImport from './transformers/import';
-import transformCall from './transformers/call';
+import glob from 'glob';
+
+import transformCall from 'transformers/call';
+import transformImport from 'transformers/import';
+
 
 const defaultBabelExtensions = ['.js', '.jsx', '.es', '.es6'];
 export const defaultExtensions = defaultBabelExtensions;

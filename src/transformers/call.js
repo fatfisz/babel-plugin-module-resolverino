@@ -1,4 +1,5 @@
-import { matchesPattern, mapPathString } from '../utils';
+import { matchesPattern, mapPathString } from 'utils';
+
 
 const patterns = [
   'require',

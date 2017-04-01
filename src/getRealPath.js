@@ -1,7 +1,10 @@
 import path from 'path';
+
 import resolve from 'resolve';
-import { toLocalPath, toPosixPath, replaceExtension } from './utils';
-import mapToRelative from './mapToRelative';
+
+import mapToRelative from 'mapToRelative';
+import { toLocalPath, toPosixPath, replaceExtension } from 'utils';
+
 
 function findPathInRoots(sourcePath, rootDirs, cwd, extensions) {
   // Search the source path inside every custom root directory

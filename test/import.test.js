@@ -1,8 +1,9 @@
-/* eslint-env jest */
 import { transform } from 'babel-core';
 import transformToCommonJsPlugin from 'babel-plugin-transform-es2015-modules-commonjs';
 import { stripIndent } from 'common-tags';
-import plugin from '../src';
+
+import plugin from 'index';
+
 
 describe('import and export statement', () => {
   function testImport(source, output, transformerOpts) {

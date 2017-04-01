@@ -1,5 +1,7 @@
 import path from 'path';
-import { toPosixPath } from './utils';
+
+import { toPosixPath } from 'utils';
+
 
 function resolve(cwd, filename) {
   if (path.isAbsolute(filename)) return filename;

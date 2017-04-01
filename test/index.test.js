@@ -1,7 +1,9 @@
-/* eslint-env jest */
 import path from 'path';
+
 import { transform } from 'babel-core';
-import plugin from '../src';
+
+import plugin from 'index';
+
 
 describe('module-resolver', () => {
   function testWithImport(source, output, transformerOpts) {

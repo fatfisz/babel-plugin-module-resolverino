@@ -1,5 +1,7 @@
 import path from 'path';
-import getRealPath from './getRealPath';
+
+import getRealPath from 'getRealPath';
+
 
 export function toPosixPath(modulePath) {
   return modulePath.replace(/\\/g, '/');

@@ -1,6 +1,7 @@
-/* eslint-env jest */
-import { transform } from 'babel-core'; // eslint-disable-line import/no-extraneous-dependencies
-import plugin from '../src';
+import { transform } from 'babel-core';
+
+import plugin from 'index';
+
 
 // all calls take a path as the first argument
 const calls = [

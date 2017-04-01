@@ -1,6 +1,7 @@
-/* eslint-env jest */
 import path from 'path';
-import mapToRelative from '../src/mapToRelative';
+
+import mapToRelative from 'mapToRelative';
+
 
 describe('mapToRelative', () => {
   describe('should map to relative path with a custom cwd', () => {
