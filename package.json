@@ -1,19 +1,18 @@
 {
-  "name": "babel-plugin-module-resolver",
-  "version": "2.5.0",
+  "name": "babel-plugin-module-resolverino",
+  "version": "0.0.1",
   "main": "lib/index.js",
   "description": "Module resolver plugin for Babel",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tleunen/babel-plugin-module-resolver.git"
+    "url": "https://github.com/fatfisz/babel-plugin-module-resolverino.git"
   },
   "files": [
     "lib"
   ],
   "author": {
-    "name": "Tommy Leunen",
-    "email": "tommy.leunen@gmail.com",
-    "url": "http://tommyleunen.com"
+    "name": "Rafał Ruciński",
+    "url": "https://fatfisz.com"
   },
   "license": "MIT",
   "keywords": [
@@ -49,14 +48,14 @@
     "standard-version": "^4.0.0"
   },
   "scripts": {
-    "lint": "eslint src test",
     "compile": "babel src --out-dir lib",
-    "pretest": "npm run lint",
+    "lint": "eslint src test",
+    "prepublish": "yarn compile",
+    "pretest": "yarn lint",
+    "release": "standard-version",
     "test": "jest --coverage",
     "test:suite": "jest",
-    "test:watch": "jest --watch",
-    "prepublish": "npm run compile",
-    "release": "standard-version"
+    "test:watch": "jest --watch"
   },
   "jest": {
     "testRegex": "/test/.*\\.test\\.js$",
