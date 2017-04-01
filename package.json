@@ -48,11 +48,11 @@
   "scripts": {
     "lint": "eslint src test",
     "compile": "babel src --out-dir lib",
-    "pretest": "npm run lint",
+    "pretest": "yarn lint",
     "test": "jest --coverage",
     "test:suite": "jest",
     "test:watch": "jest --watch",
-    "prepublish": "npm run compile",
+    "prepublish": "yarn compile",
     "release": "standard-version"
   },
   "jest": {
