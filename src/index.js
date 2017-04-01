@@ -17,7 +17,6 @@ function isRegExp(string) {
 
 export function manipulatePluginOptions(pluginOpts) {
   if (pluginOpts.root) {
-    // eslint-disable-next-line no-param-reassign
     pluginOpts.root = pluginOpts.root.reduce((resolvedDirs, dirPath) => {
       if (glob.hasMagic(dirPath)) {
         return resolvedDirs.concat(
@@ -27,11 +26,9 @@ export function manipulatePluginOptions(pluginOpts) {
       return resolvedDirs.concat(dirPath);
     }, []);
   } else {
-    // eslint-disable-next-line no-param-reassign
     pluginOpts.root = [];
   }
 
-  // eslint-disable-next-line no-param-reassign
   pluginOpts.regExps = [];
 
   if (pluginOpts.alias) {
@@ -50,16 +47,13 @@ export function manipulatePluginOptions(pluginOpts) {
 
         pluginOpts.regExps.push([new RegExp(key), substitute]);
 
-        // eslint-disable-next-line no-param-reassign
         delete pluginOpts.alias[key];
       });
   } else {
-    // eslint-disable-next-line no-param-reassign
     pluginOpts.alias = {};
   }
 
   if (!pluginOpts.extensions) {
-    // eslint-disable-next-line no-param-reassign
     pluginOpts.extensions = defaultExtensions;
   }
 
