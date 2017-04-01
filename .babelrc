@@ -1,5 +1,12 @@
 {
-  "presets": ["latest"],
+  "presets": [
+    ["env", {
+      "targets": {
+        "node": 4
+      },
+      "loose": true
+    }]
+  ],
   "plugins": [
     "transform-object-rest-spread",
     ["module-resolverino", { "root": ["./src"] }]

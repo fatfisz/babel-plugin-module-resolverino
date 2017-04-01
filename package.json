@@ -34,22 +34,24 @@
     "resolve": "^1.3.2"
   },
   "devDependencies": {
-    "babel-cli": "^6.23.0",
     "babel-core": "^6.23.1",
     "babel-jest": "^19.0.0",
     "babel-plugin-module-resolverino": "^0.0.1",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.24.0",
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
-    "babel-preset-latest": "^6.22.0",
+    "babel-preset-env": "^1.3.2",
+    "builtin-modules": "^1.1.1",
     "common-tags": "^1.4.0",
     "eslint": "^3.16.1",
     "eslint-config-airbnb-base": "^11.1.0",
     "eslint-plugin-import": "^2.2.0",
     "jest": "^19.0.2",
+    "rollup": "^0.41.6",
+    "rollup-plugin-babel": "^2.7.1",
     "standard-version": "^4.0.0"
   },
   "scripts": {
-    "compile": "babel src --out-dir lib",
+    "compile": "rollup -c",
     "lint": "eslint src test",
     "prepublish": "yarn compile",
     "pretest": "yarn lint",
