@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { dirname } from 'path';
+import { dirname, resolve } from 'path';
 
 import findBabelConfig from 'find-babel-config';
 import glob from 'glob';
@@ -40,15 +40,18 @@ function normalizePluginOptions(file) {
   normalizeCwd.call(this, file);
 
   if (opts.root) {
-    opts.root = opts.root.reduce((resolvedDirs, dirPath) => {
-      if (glob.hasMagic(dirPath)) {
-        return resolvedDirs.concat(
-          glob.sync(dirPath)
-            .filter(path => fs.lstatSync(path).isDirectory()),
-        );
-      }
-      return resolvedDirs.concat(dirPath);
-    }, []);
+    opts.root = opts.root
+      .map(dirPath => resolve(opts.cwd, dirPath))
+      .reduce((resolvedDirs, absDirPath) => {
+        if (glob.hasMagic(absDirPath)) {
+          const roots = glob.sync(absDirPath)
+            .filter(path => fs.lstatSync(path).isDirectory());
+
+          return [...resolvedDirs, ...roots];
+        }
+
+        return [...resolvedDirs, absDirPath];
+      }, []);
   } else {
     opts.root = [];
   }
