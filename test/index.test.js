@@ -112,6 +112,36 @@ describe('module-resolver', () => {
       });
     });
 
+    describe('multiple roots', () => {
+      const rootTransformerOpts = {
+        babelrc: false,
+        plugins: [
+          [plugin, {
+            root: [
+              './test/testproject/src/actions',
+              './test/testproject/src/components',
+            ],
+          }],
+        ],
+      };
+
+      it('should resolve the file sub path in root 1', () => {
+        testWithImport(
+          'something',
+          './test/testproject/src/actions/something',
+          rootTransformerOpts,
+        );
+      });
+
+      it('should resolve the file sub path in root 2', () => {
+        testWithImport(
+          'Root',
+          './test/testproject/src/components/Root',
+          rootTransformerOpts,
+        );
+      });
+    });
+
     describe('glob root', () => {
       const globRootTransformerOpts = {
         babelrc: false,
