@@ -361,6 +361,27 @@ describe('module-resolver', () => {
         );
       });
     });
+
+    describe('with the plugin applied twice', () => {
+      const doubleAliasTransformerOpts = {
+        plugins: [
+          [plugin, { root: ['.'] }],
+          [plugin, {
+            alias: {
+              '^@namespace/foo-(.+)': 'packages/\\1',
+            },
+          }],
+        ],
+      };
+
+      it('should support replacing parts of a path', () => {
+        testWithImport(
+          '@namespace/foo-bar',
+          'packages/bar',
+          doubleAliasTransformerOpts,
+        );
+      });
+    });
   });
 
   describe('with custom cwd', () => {
