@@ -1,4 +1,6 @@
 # babel-plugin-module-resolverino
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/fatfisz/babel-plugin-module-resolverino.svg)](https://greenkeeper.io/)
 [![Maintenance Status][status-image]][status-url] [![NPM version][npm-image]][npm-url] [![Build Status Linux][circleci-image]][circleci-url] [![Build Status Windows][appveyor-image]][appveyor-url] [![Coverage Status][coverage-image]][coverage-url]
 
 A [Babel](http://babeljs.io) plugin to add a new resolver for your modules when compiling your code using Babel. This plugin allows you to add new "root" directories that contain your modules. It also allows you to setup a custom alias for directories, specific files, or even other npm modules.
