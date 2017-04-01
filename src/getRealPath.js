@@ -28,19 +28,19 @@ function findPathInRoots(sourcePath, rootDirs, cwd, extensions) {
 function getRealPathFromRootConfig(sourcePath, absCurrentFile, rootDirs, cwd, extensions) {
   const absFileInRoot = findPathInRoots(sourcePath, rootDirs, cwd, extensions);
 
-  if (absFileInRoot) {
-    const realSourceFileExtension = extname(absFileInRoot);
-    const sourceFileExtension = extname(sourcePath);
-
-    // map the source and keep its extension if the import/require had one
-    const ext = realSourceFileExtension === sourceFileExtension ? realSourceFileExtension : '';
-    return toLocalPath(toPosixPath(replaceExtension(
-      mapToRelative(cwd, absCurrentFile, absFileInRoot),
-      ext,
-    )));
+  if (!absFileInRoot) {
+    return null;
   }
 
-  return null;
+  const realSourceFileExtension = extname(absFileInRoot);
+  const sourceFileExtension = extname(sourcePath);
+
+  // map the source and keep its extension if the import/require had one
+  const ext = realSourceFileExtension === sourceFileExtension ? realSourceFileExtension : '';
+  return toLocalPath(toPosixPath(replaceExtension(
+    mapToRelative(cwd, absCurrentFile, absFileInRoot),
+    ext,
+  )));
 }
 
 function getRealPathFromAliasConfig(sourcePath, absCurrentFile, alias, cwd) {
