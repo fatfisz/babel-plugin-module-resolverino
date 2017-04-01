@@ -19,9 +19,7 @@ describe('module-resolver', () => {
         babelrc: false,
         plugins: [
           [plugin, {
-            root: [
-              './test/testproject/src',
-            ],
+            root: './test/testproject/src',
           }],
         ],
       };
@@ -147,9 +145,7 @@ describe('module-resolver', () => {
         babelrc: false,
         plugins: [
           [plugin, {
-            root: [
-              './test/testproject/src/**',
-            ],
+            root: './test/testproject/src/**',
           }],
         ],
       };
@@ -192,9 +188,7 @@ describe('module-resolver', () => {
         babelrc: false,
         plugins: [
           [plugin, {
-            root: [
-              './test/testproject/src',
-            ],
+            root: './test/testproject/src',
             extensions: ['.txt'],
           }],
         ],
@@ -395,7 +389,7 @@ describe('module-resolver', () => {
     describe('with the plugin applied twice', () => {
       const doubleAliasTransformerOpts = {
         plugins: [
-          [plugin, { root: ['.'] }],
+          [plugin, { root: '.' }],
           [plugin, {
             alias: {
               '^@namespace/foo-(.+)': 'packages/\\1',
@@ -420,7 +414,7 @@ describe('module-resolver', () => {
         babelrc: false,
         plugins: [
           [plugin, {
-            root: ['./testproject/src'],
+            root: './testproject/src',
             alias: {
               test: './testproject/test',
             },
@@ -451,7 +445,7 @@ describe('module-resolver', () => {
         babelrc: false,
         plugins: [
           [plugin, {
-            root: ['./src'],
+            root: './src',
             cwd: resolve('test/testproject'),
           }],
         ],
@@ -471,7 +465,7 @@ describe('module-resolver', () => {
         babelrc: false,
         plugins: [
           [plugin, {
-            root: ['./testproject/*'],
+            root: './testproject/*',
             cwd: resolve('test'),
           }],
         ],
@@ -492,7 +486,7 @@ describe('module-resolver', () => {
       babelrc: false,
       plugins: [
         [plugin, {
-          root: ['./src'],
+          root: './src',
           alias: {
             test: './test',
           },
@@ -523,9 +517,7 @@ describe('module-resolver', () => {
         babelrc: false,
         plugins: [
           [plugin, {
-            root: [
-              './src',
-            ],
+            root: './src',
             cwd: 'babelrc',
           }],
         ],
@@ -563,9 +555,7 @@ describe('module-resolver', () => {
         babelrc: false,
         plugins: [
           [pluginWithMock, {
-            root: [
-              '.',
-            ],
+            root: '.',
             cwd: 'babelrc',
           }],
         ],

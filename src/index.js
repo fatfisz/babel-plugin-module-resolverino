@@ -40,6 +40,10 @@ function normalizePluginOptions(file) {
   normalizeCwd.call(this, file);
 
   if (opts.root) {
+    if (!Array.isArray(opts.root)) {
+      opts.root = [opts.root];
+    }
+
     opts.root = opts.root
       .map(dirPath => resolve(opts.cwd, dirPath))
       .reduce((resolvedDirs, absDirPath) => {
