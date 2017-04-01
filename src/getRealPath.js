@@ -90,7 +90,7 @@ function getRealPathFromRegExpConfig(sourcePath, regExps) {
   return aliasedSourceFile;
 }
 
-export default function getRealPath(sourcePath, { file, opts, cwd }) {
+export default function getRealPath(sourcePath, { file, opts }) {
   if (sourcePath[0] === '.') {
     return sourcePath;
   }
@@ -100,7 +100,7 @@ export default function getRealPath(sourcePath, { file, opts, cwd }) {
   const currentFile = file.opts.filename;
   const absCurrentFile = path.resolve(currentFile);
 
-  const { root, extensions, alias, regExps } = opts;
+  const { cwd, root, extensions, alias, regExps } = opts;
 
   const sourceFileFromRoot = getRealPathFromRootConfig(
     sourcePath, absCurrentFile, root, cwd, extensions,

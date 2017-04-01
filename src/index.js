@@ -1,5 +1,5 @@
 import fs from 'fs';
-import path from 'path';
+import { dirname } from 'path';
 
 import findBabelConfig from 'find-babel-config';
 import glob from 'glob';
@@ -8,34 +8,58 @@ import transformCall from 'transformers/call';
 import transformImport from 'transformers/import';
 
 
-const defaultBabelExtensions = ['.js', '.jsx', '.es', '.es6'];
-export const defaultExtensions = defaultBabelExtensions;
+const defaultExtensions = ['.js', '.jsx', '.es', '.es6'];
 
 function isRegExp(string) {
   return string.startsWith('^') || string.endsWith('$');
 }
 
-export function manipulatePluginOptions(pluginOpts) {
-  if (pluginOpts.root) {
-    pluginOpts.root = pluginOpts.root.reduce((resolvedDirs, dirPath) => {
+function normalizeCwd(file) {
+  const { opts } = this;
+
+  if (opts.cwd === 'babelrc') {
+    const startPath = (file.opts.filename === 'unknown')
+      ? './'
+      : file.opts.filename;
+
+    const { file: babelPath } = findBabelConfig.sync(startPath);
+
+    opts.cwd = babelPath
+      ? dirname(babelPath)
+      : null;
+  }
+
+  if (!opts.cwd) {
+    opts.cwd = process.cwd();
+  }
+}
+
+function normalizePluginOptions(file) {
+  const { opts } = this;
+
+  normalizeCwd.call(this, file);
+
+  if (opts.root) {
+    opts.root = opts.root.reduce((resolvedDirs, dirPath) => {
       if (glob.hasMagic(dirPath)) {
         return resolvedDirs.concat(
-          glob.sync(dirPath).filter(p => fs.lstatSync(p).isDirectory()),
+          glob.sync(dirPath)
+            .filter(path => fs.lstatSync(path).isDirectory()),
         );
       }
       return resolvedDirs.concat(dirPath);
     }, []);
   } else {
-    pluginOpts.root = [];
+    opts.root = [];
   }
 
-  pluginOpts.regExps = [];
+  opts.regExps = [];
 
-  if (pluginOpts.alias) {
-    Object.keys(pluginOpts.alias)
+  if (opts.alias) {
+    Object.keys(opts.alias)
       .filter(isRegExp)
       .forEach((key) => {
-        const parts = pluginOpts.alias[key].split('\\\\');
+        const parts = opts.alias[key].split('\\\\');
 
         function substitute(execResult) {
           return parts
@@ -45,19 +69,19 @@ export function manipulatePluginOptions(pluginOpts) {
             .join('\\');
         }
 
-        pluginOpts.regExps.push([new RegExp(key), substitute]);
+        opts.regExps.push([new RegExp(key), substitute]);
 
-        delete pluginOpts.alias[key];
+        delete opts.alias[key];
       });
   } else {
-    pluginOpts.alias = {};
+    opts.alias = {};
   }
 
-  if (!pluginOpts.extensions) {
-    pluginOpts.extensions = defaultExtensions;
+  if (!opts.extensions) {
+    opts.extensions = defaultExtensions;
   }
 
-  return pluginOpts;
+  return opts;
 }
 
 export default ({ types }) => {
@@ -74,28 +98,7 @@ export default ({ types }) => {
   };
 
   return {
-    manipulateOptions(babelOptions) {
-      let findPluginOptions = babelOptions.plugins.find(plugin => plugin[0] === this)[1];
-      findPluginOptions = manipulatePluginOptions(findPluginOptions);
-
-      this.customCWD = findPluginOptions.cwd;
-    },
-
-    pre(file) {
-      let { customCWD } = this.plugin;
-      if (customCWD === 'babelrc') {
-        const startPath = (file.opts.filename === 'unknown')
-          ? './'
-          : file.opts.filename;
-
-        const { file: babelFile } = findBabelConfig.sync(startPath);
-        customCWD = babelFile
-          ? path.dirname(babelFile)
-          : null;
-      }
-
-      this.cwd = customCWD || process.cwd();
-    },
+    pre: normalizePluginOptions,
 
     visitor: {
       Program: {
