@@ -42,12 +42,13 @@ function normalizePluginOptions(file) {
   if (opts.root) {
     opts.root = opts.root.reduce((resolvedDirs, dirPath) => {
       if (glob.hasMagic(dirPath)) {
-        return resolvedDirs.concat(
-          glob.sync(dirPath)
-            .filter(path => fs.lstatSync(path).isDirectory()),
-        );
+        const roots = glob.sync(dirPath)
+          .filter(path => fs.lstatSync(path).isDirectory());
+
+        return [...resolvedDirs, ...roots];
       }
-      return resolvedDirs.concat(dirPath);
+
+      return [...resolvedDirs, dirPath];
     }, []);
   } else {
     opts.root = [];

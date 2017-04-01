@@ -1,4 +1,4 @@
-import path from 'path';
+import { resolve } from 'path';
 
 import mapToRelative from 'mapToRelative';
 
@@ -7,14 +7,14 @@ describe('mapToRelative', () => {
   describe('should map to relative path with a custom cwd', () => {
     it('with a relative filename', () => {
       const currentFile = './utils/test/file.js';
-      const result = mapToRelative(path.resolve('./test'), currentFile, 'utils/dep');
+      const result = mapToRelative(resolve('./test'), currentFile, 'utils/dep');
 
       expect(result).toBe('../dep');
     });
 
     it('with an absolute filename', () => {
-      const currentFile = path.join(process.cwd(), './utils/test/file.js');
-      const result = mapToRelative(process.cwd(), currentFile, 'utils/dep');
+      const currentFile = resolve('./utils/test/file.js');
+      const result = mapToRelative(resolve('.'), currentFile, 'utils/dep');
 
       expect(result).toBe('../dep');
     });

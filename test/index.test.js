@@ -1,4 +1,4 @@
-import path from 'path';
+import { join } from 'path';
 
 import { transform } from 'babel-core';
 
@@ -396,7 +396,7 @@ describe('module-resolver', () => {
             alias: {
               test: './testproject/test',
             },
-            cwd: path.join(process.cwd(), 'test'),
+            cwd: join(process.cwd(), 'test'),
           }],
         ],
       };

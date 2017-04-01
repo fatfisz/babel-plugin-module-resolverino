@@ -1,6 +1,6 @@
-import path from 'path';
+import { extname, resolve } from 'path';
 
-import resolve from 'resolve';
+import requireResolve from 'resolve';
 
 import mapToRelative from 'mapToRelative';
 import { toLocalPath, toPosixPath, replaceExtension } from 'utils';
@@ -12,8 +12,8 @@ function findPathInRoots(sourcePath, rootDirs, cwd, extensions) {
   rootDirs.some((dir) => {
     try {
       // check if the file exists (will throw if not)
-      resolvedSourceFile = resolve.sync(`./${sourcePath}`, {
-        basedir: path.resolve(cwd, dir),
+      resolvedSourceFile = requireResolve.sync(`./${sourcePath}`, {
+        basedir: resolve(cwd, dir),
         extensions,
       });
       return true;
@@ -29,8 +29,8 @@ function getRealPathFromRootConfig(sourcePath, absCurrentFile, rootDirs, cwd, ex
   const absFileInRoot = findPathInRoots(sourcePath, rootDirs, cwd, extensions);
 
   if (absFileInRoot) {
-    const realSourceFileExtension = path.extname(absFileInRoot);
-    const sourceFileExtension = path.extname(sourcePath);
+    const realSourceFileExtension = extname(absFileInRoot);
+    const sourceFileExtension = extname(sourcePath);
 
     // map the source and keep its extension if the import/require had one
     const ext = realSourceFileExtension === sourceFileExtension ? realSourceFileExtension : '';
@@ -98,7 +98,7 @@ export default function getRealPath(sourcePath, { file, opts }) {
   // file param is a relative path from the environment current working directory
   // (not from cwd param)
   const currentFile = file.opts.filename;
-  const absCurrentFile = path.resolve(currentFile);
+  const absCurrentFile = resolve(currentFile);
 
   const { cwd, root, extensions, alias, regExps } = opts;
 
