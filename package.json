@@ -46,14 +46,14 @@
     "standard-version": "^4.0.0"
   },
   "scripts": {
-    "lint": "eslint src test",
     "compile": "babel src --out-dir lib",
+    "lint": "eslint src test",
+    "prepublish": "yarn compile",
     "pretest": "yarn lint",
+    "release": "standard-version",
     "test": "jest --coverage",
     "test:suite": "jest",
-    "test:watch": "jest --watch",
-    "prepublish": "yarn compile",
-    "release": "standard-version"
+    "test:watch": "jest --watch"
   },
   "jest": {
     "testRegex": "/test/.*\\.test\\.js$",
