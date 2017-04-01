@@ -1,4 +1,4 @@
-import { join } from 'path';
+import { resolve } from 'path';
 
 import { transform } from 'babel-core';
 
@@ -390,13 +390,11 @@ describe('module-resolver', () => {
         babelrc: false,
         plugins: [
           [plugin, {
-            root: [
-              './testproject/src',
-            ],
+            root: ['./testproject/src'],
             alias: {
               test: './testproject/test',
             },
-            cwd: join(process.cwd(), 'test'),
+            cwd: resolve('test'),
           }],
         ],
       };
@@ -417,6 +415,46 @@ describe('module-resolver', () => {
         );
       });
     });
+
+    describe('with root', () => {
+      const transformerOpts = {
+        babelrc: false,
+        plugins: [
+          [plugin, {
+            root: ['./src'],
+            cwd: resolve('test/testproject'),
+          }],
+        ],
+      };
+
+      it('should resolve the sub file path', () => {
+        testWithImport(
+          'components/Root',
+          './test/testproject/src/components/Root',
+          transformerOpts,
+        );
+      });
+    });
+
+    describe('with glob root', () => {
+      const transformerOpts = {
+        babelrc: false,
+        plugins: [
+          [plugin, {
+            root: ['./src/**'],
+            cwd: resolve('test/testproject'),
+          }],
+        ],
+      };
+
+      it('should resolve the sub file path', () => {
+        testWithImport(
+          'components/Root',
+          './test/testproject/src/components/Root',
+          transformerOpts,
+        );
+      });
+    });
   });
 
   describe('babelrc', () => {
@@ -424,9 +462,7 @@ describe('module-resolver', () => {
       babelrc: false,
       plugins: [
         [plugin, {
-          root: [
-            './src',
-          ],
+          root: ['./src'],
           alias: {
             test: './test',
           },
