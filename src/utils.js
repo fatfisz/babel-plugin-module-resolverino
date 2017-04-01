@@ -35,7 +35,7 @@ export function matchesPattern(t, calleePath, pattern) {
 }
 
 export function mapPathString(t, nodePath, state) {
-  if (!nodePath || nodePath.type !== 'StringLiteral') {
+  if (!t.isStringLiteral(nodePath)) {
     return;
   }
 

@@ -4,7 +4,10 @@ import { toPosixPath } from 'utils';
 
 
 function resolve(cwd, filename) {
-  if (path.isAbsolute(filename)) return filename;
+  if (path.isAbsolute(filename)) {
+    return filename;
+  }
+
   return path.resolve(cwd, filename);
 }
 
