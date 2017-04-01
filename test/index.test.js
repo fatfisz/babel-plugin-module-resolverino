@@ -222,7 +222,6 @@ describe('module-resolver', () => {
             components: './test/testproject/src/components',
             '~': './test/testproject/src',
             'awesome/components': './test/testproject/src/components',
-            abstract: 'npm:concrete',
             underscore: 'lodash',
             prefix: 'prefix/lib',
             '^@namespace/foo-(.+)': 'packages/\\1',
@@ -305,14 +304,6 @@ describe('module-resolver', () => {
           aliasTransformerOpts,
         );
       });
-    });
-
-    it('(legacy) should support aliasing a node module with "npm:"', () => {
-      testWithImport(
-        'abstract/thing',
-        'concrete/thing',
-        aliasTransformerOpts,
-      );
     });
 
     it('should support aliasing a node modules', () => {
@@ -416,14 +407,15 @@ describe('module-resolver', () => {
           [plugin, {
             root: './testproject/src',
             alias: {
-              test: './testproject/test',
+              constantsRelative: './constants',
+              constantsNonRelative: 'constants',
             },
             cwd: resolve('test'),
           }],
         ],
       };
 
-      it('should resolve the sub file path', () => {
+      it('should resolve the file path', () => {
         testWithImport(
           'components/Root',
           './test/testproject/src/components/Root',
@@ -431,10 +423,18 @@ describe('module-resolver', () => {
         );
       });
 
-      it('should alias the sub file path', () => {
+      it('should alias the relative path while ignoring cwd and root options', () => {
         testWithImport(
-          'test/tools',
-          './test/testproject/test/tools',
+          'constantsRelative/actions',
+          './constants/actions',
+          transformerOpts,
+        );
+      });
+
+      it('should alias the non-relative path while considering cwd and root options', () => {
+        testWithImport(
+          'constantsNonRelative/actions',
+          './test/testproject/src/constants/actions',
           transformerOpts,
         );
       });
@@ -488,7 +488,7 @@ describe('module-resolver', () => {
         [plugin, {
           root: './src',
           alias: {
-            test: './test',
+            actions: 'constants/actions',
           },
           cwd: 'babelrc',
         }],
@@ -506,8 +506,8 @@ describe('module-resolver', () => {
 
     it('should alias the sub file path', () => {
       testWithImport(
-        'test/tools',
-        '../test/tools',
+        'actions',
+        './constants/actions',
         transformerOpts,
       );
     });

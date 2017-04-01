@@ -6,12 +6,12 @@ import mapToRelative from 'mapToRelative';
 import { toLocalPath, toPosixPath, replaceExtension } from 'utils';
 
 
-function findPathInRoots(sourcePath, rootDirs, extensions) {
-  // Search the source path inside every custom root directory
+function findPathInRoots(sourcePath, { extensions, root }) {
   let resolvedSourceFile;
-  rootDirs.some((basedir) => {
+
+  root.some((basedir) => {
     try {
-      // check if the file exists (will throw if not)
+      // Check if the file exists (will throw if not)
       resolvedSourceFile = requireResolve.sync(`./${sourcePath}`, {
         basedir,
         extensions,
@@ -25,8 +25,8 @@ function findPathInRoots(sourcePath, rootDirs, extensions) {
   return resolvedSourceFile;
 }
 
-function getRealPathFromRootConfig(sourcePath, absCurrentFile, rootDirs, cwd, extensions) {
-  const absFileInRoot = findPathInRoots(sourcePath, rootDirs, extensions);
+function getRealPathFromRootConfig(sourcePath, currentFile, opts) {
+  const absFileInRoot = findPathInRoots(sourcePath, opts);
 
   if (!absFileInRoot) {
     return null;
@@ -35,48 +35,18 @@ function getRealPathFromRootConfig(sourcePath, absCurrentFile, rootDirs, cwd, ex
   const realSourceFileExtension = extname(absFileInRoot);
   const sourceFileExtension = extname(sourcePath);
 
-  // map the source and keep its extension if the import/require had one
+  // Map the source and keep its extension if the import/require had one
   const ext = realSourceFileExtension === sourceFileExtension ? realSourceFileExtension : '';
   return toLocalPath(toPosixPath(replaceExtension(
-    mapToRelative(cwd, absCurrentFile, absFileInRoot),
+    mapToRelative(opts.cwd, currentFile, absFileInRoot),
     ext,
   )));
 }
 
-function getRealPathFromAliasConfig(sourcePath, absCurrentFile, alias, cwd) {
-  const moduleSplit = sourcePath.split('/');
-
-  let aliasPath;
-  while (moduleSplit.length) {
-    const m = moduleSplit.join('/');
-    if ({}.hasOwnProperty.call(alias, m)) {
-      aliasPath = alias[m];
-      break;
-    }
-    moduleSplit.pop();
-  }
-
-  // no alias mapping found
-  if (!aliasPath) {
-    return null;
-  }
-
-  // remove legacy "npm:" prefix for npm packages
-  aliasPath = aliasPath.replace(/^(npm:)/, '');
-  const newPath = sourcePath.replace(moduleSplit.join('/'), aliasPath);
-
-  // alias to npm module don't need relative mapping
-  if (aliasPath[0] !== '.') {
-    return newPath;
-  }
-
-  return toLocalPath(toPosixPath(mapToRelative(cwd, absCurrentFile, newPath)));
-}
-
-function getRealPathFromRegExpConfig(sourcePath, regExps) {
+function getRealPathFromAliasConfig(sourcePath, currentFile, opts) {
   let aliasedSourceFile;
 
-  regExps.find(([regExp, substitute]) => {
+  opts.alias.find(([regExp, substitute]) => {
     const execResult = regExp.exec(sourcePath);
 
     if (execResult === null) {
@@ -87,6 +57,19 @@ function getRealPathFromRegExpConfig(sourcePath, regExps) {
     return true;
   });
 
+  if (!aliasedSourceFile) {
+    return null;
+  }
+
+  if (aliasedSourceFile[0] === '.') {
+    return aliasedSourceFile;
+  }
+
+  const realPathFromRoot = getRealPathFromRootConfig(aliasedSourceFile, currentFile, opts);
+  if (realPathFromRoot) {
+    return realPathFromRoot;
+  }
+
   return aliasedSourceFile;
 }
 
@@ -95,32 +78,18 @@ export default function getRealPath(sourcePath, { file, opts }) {
     return sourcePath;
   }
 
-  // file param is a relative path from the environment current working directory
+  // File param is a relative path from the environment current working directory
   // (not from cwd param)
-  const currentFile = file.opts.filename;
-  const absCurrentFile = resolve(currentFile);
+  const currentFile = resolve(file.opts.filename);
 
-  const { cwd, root, extensions, alias, regExps } = opts;
-
-  const sourceFileFromRoot = getRealPathFromRootConfig(
-    sourcePath, absCurrentFile, root, cwd, extensions,
-  );
+  const sourceFileFromRoot = getRealPathFromRootConfig(sourcePath, currentFile, opts);
   if (sourceFileFromRoot) {
     return sourceFileFromRoot;
   }
 
-  const sourceFileFromAlias = getRealPathFromAliasConfig(
-    sourcePath, absCurrentFile, alias, cwd,
-  );
+  const sourceFileFromAlias = getRealPathFromAliasConfig(sourcePath, currentFile, opts);
   if (sourceFileFromAlias) {
     return sourceFileFromAlias;
-  }
-
-  const sourceFileFromRegExp = getRealPathFromRegExpConfig(
-    sourcePath, regExps,
-  );
-  if (sourceFileFromRegExp) {
-    return sourceFileFromRegExp;
   }
 
   return sourcePath;
