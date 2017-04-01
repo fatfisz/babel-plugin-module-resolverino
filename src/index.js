@@ -1,23 +1,15 @@
-import path from 'path';
 import fs from 'fs';
-import glob from 'glob';
+import path from 'path';
+
 import findBabelConfig from 'find-babel-config';
-import getRealPath from './getRealPath';
-import transformImportCall from './transformers/import';
-import transformSystemImportCall from './transformers/systemImport';
-import transformJestCalls from './transformers/jest';
-import transformRequireCall from './transformers/require';
+import glob from 'glob';
+
+import transformCall from 'transformers/call';
+import transformImport from 'transformers/import';
+
 
 const defaultBabelExtensions = ['.js', '.jsx', '.es', '.es6'];
 export const defaultExtensions = defaultBabelExtensions;
-
-export function mapModule(sourcePath, currentFile, pluginOpts, cwd) {
-  return getRealPath(sourcePath, currentFile, {
-    cwd,
-    pluginOpts,
-    extensions: pluginOpts.extensions || defaultExtensions,
-  });
-}
 
 function isRegExp(string) {
   return string.startsWith('^') || string.endsWith('$');
@@ -34,6 +26,9 @@ export function manipulatePluginOptions(pluginOpts) {
       }
       return resolvedDirs.concat(dirPath);
     }, []);
+  } else {
+    // eslint-disable-next-line no-param-reassign
+    pluginOpts.root = [];
   }
 
   // eslint-disable-next-line no-param-reassign
@@ -58,59 +53,62 @@ export function manipulatePluginOptions(pluginOpts) {
         // eslint-disable-next-line no-param-reassign
         delete pluginOpts.alias[key];
       });
+  } else {
+    // eslint-disable-next-line no-param-reassign
+    pluginOpts.alias = {};
+  }
+
+  if (!pluginOpts.extensions) {
+    // eslint-disable-next-line no-param-reassign
+    pluginOpts.extensions = defaultExtensions;
   }
 
   return pluginOpts;
 }
 
-export default ({ types: t }) => ({
-  manipulateOptions(babelOptions) {
-    let findPluginOptions = babelOptions.plugins.find(plugin => plugin[0] === this)[1];
-    findPluginOptions = manipulatePluginOptions(findPluginOptions);
+export default ({ types }) => {
+  const importVisitors = {
+    CallExpression(nodePath, state) {
+      transformCall(types, nodePath, state);
+    },
+    ImportDeclaration(nodePath, state) {
+      transformImport(types, nodePath, state);
+    },
+    ExportDeclaration(nodePath, state) {
+      transformImport(types, nodePath, state);
+    },
+  };
 
-    this.customCWD = findPluginOptions.cwd;
-  },
+  return {
+    manipulateOptions(babelOptions) {
+      let findPluginOptions = babelOptions.plugins.find(plugin => plugin[0] === this)[1];
+      findPluginOptions = manipulatePluginOptions(findPluginOptions);
 
-  pre(file) {
-    let { customCWD } = this.plugin;
-    if (customCWD === 'babelrc') {
-      const startPath = (file.opts.filename === 'unknown')
-        ? './'
-        : file.opts.filename;
+      this.customCWD = findPluginOptions.cwd;
+    },
 
-      const { file: babelFile } = findBabelConfig.sync(startPath);
-      customCWD = babelFile
-        ? path.dirname(babelFile)
-        : null;
-    }
+    pre(file) {
+      let { customCWD } = this.plugin;
+      if (customCWD === 'babelrc') {
+        const startPath = (file.opts.filename === 'unknown')
+          ? './'
+          : file.opts.filename;
 
-    this.moduleResolverCWD = customCWD || process.cwd();
-  },
+        const { file: babelFile } = findBabelConfig.sync(startPath);
+        customCWD = babelFile
+          ? path.dirname(babelFile)
+          : null;
+      }
 
-  visitor: {
-    CallExpression: {
-      exit(nodePath, state) {
-        if (nodePath.node.seen) {
-          return;
-        }
+      this.cwd = customCWD || process.cwd();
+    },
 
-        transformRequireCall(t, nodePath, mapModule, state, this.moduleResolverCWD);
-        transformJestCalls(t, nodePath, mapModule, state, this.moduleResolverCWD);
-        transformSystemImportCall(t, nodePath, mapModule, state, this.moduleResolverCWD);
-
-        // eslint-disable-next-line no-param-reassign
-        nodePath.node.seen = true;
+    visitor: {
+      Program: {
+        exit(programPath, state) {
+          programPath.traverse(importVisitors, state);
+        },
       },
     },
-    ImportDeclaration: {
-      exit(nodePath, state) {
-        transformImportCall(t, nodePath, mapModule, state, this.moduleResolverCWD);
-      },
-    },
-    ExportDeclaration: {
-      exit(nodePath, state) {
-        transformImportCall(t, nodePath, mapModule, state, this.moduleResolverCWD);
-      },
-    },
-  },
-});
+  };
+};
