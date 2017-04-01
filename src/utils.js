@@ -1,4 +1,4 @@
-import path from 'path';
+import { basename, dirname, extname, join } from 'path';
 
 import getRealPath from 'getRealPath';
 
@@ -7,25 +7,25 @@ export function toPosixPath(modulePath) {
   return modulePath.replace(/\\/g, '/');
 }
 
-export function toLocalPath(p) {
-  return p
+export function toLocalPath(path) {
+  return path
     .replace(/\/index$/, '') // remove trailing /index
     .replace(/^(?!\.)/, './'); // insert `./` to make it a local path
 }
 
-export function replaceExtension(p, ext) {
-  const filename = path.basename(p, path.extname(p)) + ext;
-  return path.join(path.dirname(p), filename);
+export function replaceExtension(path, ext) {
+  const filename = basename(path, extname(path)) + ext;
+  return join(dirname(path), filename);
 }
 
-export function matchesPattern(t, calleePath, pattern) {
+export function matchesPattern(types, calleePath, pattern) {
   const { node } = calleePath;
 
-  if (t.isMemberExpression(node)) {
+  if (types.isMemberExpression(node)) {
     return calleePath.matchesPattern(pattern);
   }
 
-  if (!t.isIdentifier(node) || pattern.includes('.')) {
+  if (!types.isIdentifier(node) || pattern.includes('.')) {
     return false;
   }
 
@@ -34,13 +34,13 @@ export function matchesPattern(t, calleePath, pattern) {
   return node.name === name;
 }
 
-export function mapPathString(t, nodePath, state) {
-  if (!t.isStringLiteral(nodePath)) {
+export function mapPathString(types, nodePath, state) {
+  if (!types.isStringLiteral(nodePath)) {
     return;
   }
 
   const modulePath = getRealPath(nodePath.node.value, state);
   if (modulePath) {
-    nodePath.replaceWith(t.stringLiteral(modulePath));
+    nodePath.replaceWith(types.stringLiteral(modulePath));
   }
 }

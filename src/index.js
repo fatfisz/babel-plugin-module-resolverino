@@ -66,16 +66,16 @@ export function manipulatePluginOptions(pluginOpts) {
   return pluginOpts;
 }
 
-export default ({ types: t }) => {
+export default ({ types }) => {
   const importVisitors = {
     CallExpression(nodePath, state) {
-      transformCall(t, nodePath, state);
+      transformCall(types, nodePath, state);
     },
     ImportDeclaration(nodePath, state) {
-      transformImport(t, nodePath, state);
+      transformImport(types, nodePath, state);
     },
     ExportDeclaration(nodePath, state) {
-      transformImport(t, nodePath, state);
+      transformImport(types, nodePath, state);
     },
   };
 
